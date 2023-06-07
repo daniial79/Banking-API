@@ -14,3 +14,8 @@ type Customer struct {
 type CustomerRepository interface {
 	FindAll() ([]Customer, error)
 }
+
+// Customer Primary Port
+type CustomerService interface {
+	GetAllCustomers() ([]Customer, error)
+}
