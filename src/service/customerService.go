@@ -7,7 +7,7 @@ type CustomerService interface {
 	GetAllCustomers() ([]core.Customer, error)
 }
 
-// wiring-up customer service to customer repository
+// Customer Service Primary Adapter
 type DefaultCustomerService struct {
 	repo core.CustomerRepository
 }

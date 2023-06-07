@@ -1,30 +1,23 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
 
+	"github.com/daniial79/Banking-API/src/core"
+	"github.com/daniial79/Banking-API/src/service"
 	"github.com/gorilla/mux"
 )
-
-type responseSample struct {
-	Message string `json:"message"`
-}
-
-func greetController(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	json.NewEncoder(w).Encode(responseSample{
-		Message: "Hello from gorilla multiplexer!",
-	})
-}
 
 func Start() {
 	router := mux.NewRouter()
 
-	router.HandleFunc("/greet", greetController)
+	//wiring-up the application components
+	customerHandler := CustomerHandler{service.NewDefaultCustomerService(core.NewCustomerRepositoryDb())}
+
+	//routings
+	router.HandleFunc("/customers", customerHandler.GetAllCustomers).Methods(http.MethodGet)
 
 	fmt.Println("server is up and running on port 8000...")
 	log.Fatalln(http.ListenAndServe(":8000", router))
