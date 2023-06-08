@@ -2,13 +2,14 @@ package service
 
 import (
 	"github.com/daniial79/Banking-API/src/core"
+	"github.com/daniial79/Banking-API/src/dto"
 	"github.com/daniial79/Banking-API/src/errs"
 )
 
 // Customer Primary Port
 type CustomerService interface {
 	GetAllCustomers(status string) ([]core.Customer, *errs.AppError)
-	GetCustomerById(id string) (*core.Customer, *errs.AppError)
+	GetCustomerById(id string) (*dto.CustomerResponse, *errs.AppError)
 }
 
 // Customer Service Primary Adapter
@@ -32,6 +33,15 @@ func (s DefaultCustomerService) GetAllCustomers(status string) ([]core.Customer,
 	return s.repo.FindAll(status)
 }
 
-func (s DefaultCustomerService) GetCustomerById(id string) (*core.Customer, *errs.AppError) {
-	return s.repo.FindById(id)
+func (s DefaultCustomerService) GetCustomerById(id string) (*dto.CustomerResponse, *errs.AppError) {
+	c, err := s.repo.FindById(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	response := c.ToDto()
+
+	return &response, nil
+
 }
