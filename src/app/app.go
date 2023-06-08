@@ -18,6 +18,7 @@ func Start() {
 
 	//routings
 	router.HandleFunc("/customers", customerHandler.GetAllCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers/{id:[0-9]+}", customerHandler.GetCustomerById).Methods(http.MethodGet)
 
 	fmt.Println("server is up and running on port 8000...")
 	log.Fatalln(http.ListenAndServe(":8000", router))
