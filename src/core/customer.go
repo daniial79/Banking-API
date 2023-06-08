@@ -4,11 +4,11 @@ import "github.com/daniial79/Banking-API/src/errs"
 
 // Customer Core Object
 type Customer struct {
-	Id          string `json:"id"`
+	Id          string `json:"id" db:"customer_id"`
 	Name        string `json:"name"`
 	City        string `json:"city"`
 	Zipcode     string `json:"zipcode"`
-	DateofBirth string `json:"date_of_birth"`
+	DateofBirth string `json:"dateOfBirth" db:"date_of_birth"`
 	Status      string `json:"status"`
 }
 
