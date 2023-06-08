@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/daniial79/Banking-API/src/errs"
+	"github.com/daniial79/Banking-API/src/logger"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -27,13 +28,19 @@ func NewCustomerRepositoryDb() CustomerRepositoryDb {
 	return CustomerRepositoryDb{db}
 }
 
-func (d CustomerRepositoryDb) FindAll() ([]Customer, *errs.AppError) {
+func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {
 	FindAllSql := "SELECT * FROM customers"
+
+	if status == "1" {
+		FindAllSql += " WHERE status = 1"
+	} else if status == "0" {
+		FindAllSql += " WHERE status = 0"
+	}
 
 	rows, err := d.client.Query(FindAllSql)
 
 	if err != nil {
-		// fmt.Println(err)
+		logger.Error("Error while querying for customers: " + err.Error())
 		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
 	}
 
@@ -51,7 +58,7 @@ func (d CustomerRepositoryDb) FindAll() ([]Customer, *errs.AppError) {
 		)
 
 		if err != nil {
-			// fmt.Println(err)
+			logger.Error("Error while scanning customer: " + err.Error())
 			return nil, errs.NewUnexpectedDbErr("Unexpected database error")
 		}
 
@@ -67,14 +74,20 @@ func (d CustomerRepositoryDb) FindById(id string) (*Customer, *errs.AppError) {
 	row := d.client.QueryRow(FindByIdQuery, id)
 	var c Customer
 
-	err := row.Scan(&c.Id, &c.Name, &c.City, &c.DateofBirth, &c.Status, &c.Zipcode)
+	err := row.Scan(
+		&c.Id,
+		&c.Name,
+		&c.City,
+		&c.DateofBirth,
+		&c.Status,
+		&c.Zipcode,
+	)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
-			// fmt.Println("ERROR: row not found")
 			return nil, errs.NewNotFoundErr("customer not found")
 		} else {
-			// fmt.Println("ERROR: something went wrong during scan")
+			logger.Error("Error while scanning customer: " + err.Error())
 			return nil, errs.NewUnexpectedDbErr("Unexpected database error")
 		}
 	}

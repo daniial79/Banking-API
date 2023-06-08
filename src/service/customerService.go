@@ -7,7 +7,7 @@ import (
 
 // Customer Primary Port
 type CustomerService interface {
-	GetAllCustomers() ([]core.Customer, *errs.AppError)
+	GetAllCustomers(status string) ([]core.Customer, *errs.AppError)
 	GetCustomerById(id string) (*core.Customer, *errs.AppError)
 }
 
@@ -20,8 +20,16 @@ func NewDefaultCustomerService(repository core.CustomerRepository) DefaultCustom
 	return DefaultCustomerService{repository}
 }
 
-func (s DefaultCustomerService) GetAllCustomers() ([]core.Customer, *errs.AppError) {
-	return s.repo.FindAll()
+func (s DefaultCustomerService) GetAllCustomers(status string) ([]core.Customer, *errs.AppError) {
+	if status == "active" {
+		status = "1"
+	} else if status == "inactive" {
+		status = "0"
+	} else {
+		status = ""
+	}
+
+	return s.repo.FindAll(status)
 }
 
 func (s DefaultCustomerService) GetCustomerById(id string) (*core.Customer, *errs.AppError) {
