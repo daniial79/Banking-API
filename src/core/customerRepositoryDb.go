@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/daniial79/Banking-API/src/config"
 	"github.com/daniial79/Banking-API/src/errs"
 	"github.com/daniial79/Banking-API/src/logger"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,8 +17,11 @@ type CustomerRepositoryDb struct {
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
+	db, err := sqlx.Open(
+		config.GetDbDialect(),
+		config.GetDatabaseSourceName(),
+	)
 
-	db, err := sqlx.Open("mysql", "root:13454779d@tcp(localhost:3306)/banking")
 	if err != nil {
 		panic(err)
 	}
