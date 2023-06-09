@@ -15,10 +15,17 @@ type Customer struct {
 	Status      string
 }
 
+func (c Customer) ToNewCustomerResponseDto() dto.NewCustomerResponse {
+	return dto.NewCustomerResponse{
+		CustomerId: c.Id,
+	}
+}
+
 // Customer Secondary Port
 type CustomerRepository interface {
-	FindAll(status string) ([]Customer, *errs.AppError)
-	FindById(id string) (*Customer, *errs.AppError)
+	Save(Customer) (*Customer, *errs.AppError)
+	FindAll(string) ([]Customer, *errs.AppError)
+	FindById(string) (*Customer, *errs.AppError)
 }
 
 func (c Customer) setStatusAsText() string {

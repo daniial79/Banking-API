@@ -2,6 +2,7 @@ package core
 
 import (
 	"database/sql"
+	"strconv"
 
 	"github.com/daniial79/Banking-API/src/errs"
 	"github.com/daniial79/Banking-API/src/logger"
@@ -16,6 +17,27 @@ type CustomerRepositoryDb struct {
 
 func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
 	return CustomerRepositoryDb{dbClient}
+}
+
+func (d CustomerRepositoryDb) Save(c Customer) (*Customer, *errs.AppError) {
+	insertNewCustomerSql := "INSERT INTO customers (name, date_of_birth, city, zipcode, status) VALUES (?, ?, ?, ?, ?)"
+
+	result, err := d.client.Exec(insertNewCustomerSql, c.Name, c.DateofBirth, c.City, c.Zipcode, c.Status)
+	if err != nil {
+		logger.Error("Error while saving new customer: " + err.Error())
+		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		logger.Error("Error while retrieving new customer id: " + err.Error())
+		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
+	}
+
+	c.Id = strconv.FormatInt(id, 10)
+
+	return &c, nil
+
 }
 
 func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {

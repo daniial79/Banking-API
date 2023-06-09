@@ -8,7 +8,7 @@ import (
 
 // Customer Primary Port
 type CustomerService interface {
-	//TODO implement create customer + dto req and response
+	NewCustomer(dto.NewCustomerRequest) (*dto.NewCustomerResponse, *errs.AppError)
 	GetAllCustomers(status string) ([]dto.CustomerResponse, *errs.AppError)
 	GetCustomerById(id string) (*dto.CustomerResponse, *errs.AppError)
 }
@@ -20,6 +20,31 @@ type DefaultCustomerService struct {
 
 func NewDefaultCustomerService(repository core.CustomerRepository) DefaultCustomerService {
 	return DefaultCustomerService{repository}
+}
+
+func (s DefaultCustomerService) NewCustomer(req dto.NewCustomerRequest) (*dto.NewCustomerResponse, *errs.AppError) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	customerCoreObject := core.Customer{
+		Id:          "",
+		Name:        req.Name,
+		DateofBirth: req.DateOfbirth,
+		City:        req.City,
+		Zipcode:     req.Zipcode,
+		Status:      "1",
+	}
+
+	newCustomer, err := s.repo.Save(customerCoreObject)
+	if err != nil {
+		return nil, err
+	}
+
+	response := newCustomer.ToNewCustomerResponseDto()
+
+	return &response, nil
 }
 
 func (s DefaultCustomerService) GetAllCustomers(status string) ([]dto.CustomerResponse, *errs.AppError) {

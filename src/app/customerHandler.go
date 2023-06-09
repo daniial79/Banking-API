@@ -1,8 +1,10 @@
 package app
 
 import (
+	"encoding/json"
 	"net/http"
 
+	"github.com/daniial79/Banking-API/src/dto"
 	"github.com/daniial79/Banking-API/src/service"
 	"github.com/gorilla/mux"
 )
@@ -10,6 +12,24 @@ import (
 // Customer Primary Adapter
 type CustomerHandler struct {
 	service service.CustomerService
+}
+
+func (ch *CustomerHandler) CreateNewCustomer(w http.ResponseWriter, r *http.Request) {
+	var request dto.NewCustomerRequest
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		WriteResponse(w, http.StatusBadRequest, err)
+		return
+	}
+
+	response, appErr := ch.service.NewCustomer(request)
+	if err != nil {
+		WriteResponse(w, appErr.StatusCode, appErr.AsMessage())
+		return
+	}
+
+	WriteResponse(w, http.StatusCreated, response)
 }
 
 func (ch *CustomerHandler) GetAllCustomers(w http.ResponseWriter, r *http.Request) {

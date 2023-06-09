@@ -27,6 +27,7 @@ func Start() {
 	ah := AccountHandler{service: service.NewAccountService(accountRepositoryDb)}
 
 	//routings
+	router.HandleFunc("/customers", ch.CreateNewCustomer).Methods(http.MethodPost)
 	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{id:[0-9]+}", ch.GetCustomerById).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{id:[0-9]+}/account", ah.CreateNewAccount).Methods(http.MethodPost)
