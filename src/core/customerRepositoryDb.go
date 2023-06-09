@@ -2,9 +2,7 @@ package core
 
 import (
 	"database/sql"
-	"time"
 
-	"github.com/daniial79/Banking-API/src/config"
 	"github.com/daniial79/Banking-API/src/errs"
 	"github.com/daniial79/Banking-API/src/logger"
 	_ "github.com/go-sql-driver/mysql"
@@ -16,21 +14,8 @@ type CustomerRepositoryDb struct {
 	client *sqlx.DB
 }
 
-func NewCustomerRepositoryDb() CustomerRepositoryDb {
-	db, err := sqlx.Open(
-		config.GetDbDialect(),
-		config.GetDatabaseSourceName(),
-	)
-
-	if err != nil {
-		panic(err)
-	}
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-
-	return CustomerRepositoryDb{db}
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
+	return CustomerRepositoryDb{dbClient}
 }
 
 func (d CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppError) {

@@ -1,7 +1,6 @@
 package app
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/daniial79/Banking-API/src/service"
@@ -35,12 +34,4 @@ func (ch *CustomerHandler) GetCustomerById(w http.ResponseWriter, r *http.Reques
 	}
 
 	WriteResponse(w, http.StatusOK, customer)
-}
-
-func WriteResponse(w http.ResponseWriter, statusCode int, data interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(statusCode)
-	if err := json.NewEncoder(w).Encode(data); err != nil {
-		panic(err)
-	}
 }

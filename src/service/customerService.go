@@ -8,6 +8,7 @@ import (
 
 // Customer Primary Port
 type CustomerService interface {
+	//TODO implement create customer + dto req and response
 	GetAllCustomers(status string) ([]dto.CustomerResponse, *errs.AppError)
 	GetCustomerById(id string) (*dto.CustomerResponse, *errs.AppError)
 }
