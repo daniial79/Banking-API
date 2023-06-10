@@ -11,7 +11,8 @@ import (
 // Account Primary Port
 type AccountService interface {
 	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
-	FetchAllAccounts(string) (*dto.AccountsResponse, *errs.AppError)
+	FetchAllAccountsId(string) (*dto.AccountsIdResponse, *errs.AppError)
+	FetchAccountById(string) (*dto.AccountResponse, *errs.AppError)
 }
 
 // Account Default Service Primary Adapter
@@ -48,18 +49,31 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	return &newAccountResponse, nil
 }
 
-func (s DefaultAccountService) FetchAllAccounts(customerId string) (*dto.AccountsResponse, *errs.AppError) {
+func (s DefaultAccountService) FetchAllAccountsId(customerId string) (*dto.AccountsIdResponse, *errs.AppError) {
 	coreObjectAccounts, err := s.repo.FindAllCustomerAccounts(customerId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var accountsResponse dto.AccountsResponse
+	var accountsIdResponse dto.AccountsIdResponse
 
 	for _, account := range coreObjectAccounts {
-		accountsResponse.AccountsId = append(accountsResponse.AccountsId, account.AccountId)
+		accountsIdResponse.AccountsId = append(accountsIdResponse.AccountsId, account.AccountId)
 	}
 
-	return &accountsResponse, nil
+	return &accountsIdResponse, nil
+}
+
+func (s DefaultAccountService) FetchAccountById(accountId string) (*dto.AccountResponse, *errs.AppError) {
+	accountCoreObject, err := s.repo.FindById(accountId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	accountResponse := accountCoreObject.ToDto()
+
+	return &accountResponse, nil
+
 }

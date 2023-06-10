@@ -1,6 +1,7 @@
 package core
 
 import (
+	"database/sql"
 	"strconv"
 
 	"github.com/daniial79/Banking-API/src/errs"
@@ -51,4 +52,21 @@ func (d AccountRepositoryDb) FindAllCustomerAccounts(customerId string) ([]Accou
 	}
 
 	return accounts, nil
+}
+
+func (d AccountRepositoryDb) FindById(accountId string) (*Account, *errs.AppError) {
+	var account Account
+	findByIdSql := "SELECT * FROM accounts WHERE account_id = ?"
+
+	err := d.client.Get(&account, findByIdSql, accountId)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundErr("There is no account registered with this account id")
+		}
+		logger.Error("Error while retrieving account: " + err.Error())
+		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
+	}
+
+	return &account, nil
+
 }

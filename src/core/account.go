@@ -15,10 +15,27 @@ type Account struct {
 	Status      string
 }
 
+func (a Account) ToDto() dto.AccountResponse {
+	return dto.AccountResponse{
+		AccountType: a.AccountType,
+		Amount:      a.Amount,
+		Status:      a.setStatusAsText(),
+	}
+}
+
+func (a Account) setStatusAsText() string {
+	stat := "active"
+	if a.Status == "0" {
+		stat = "inactive"
+	}
+	return stat
+}
+
 // Account Secondary Port
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
 	FindAllCustomerAccounts(string) ([]Account, *errs.AppError)
+	FindById(customerId string) (*Account, *errs.AppError)
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {

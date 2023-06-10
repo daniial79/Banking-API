@@ -40,7 +40,19 @@ func (ah *AccountHandler) CreateNewAccount(w http.ResponseWriter, r *http.Reques
 func (ah *AccountHandler) FetchMyAccountsId(w http.ResponseWriter, r *http.Request) {
 	customerId := mux.Vars(r)["id"]
 
-	response, err := ah.service.FetchAllAccounts(customerId)
+	response, err := ah.service.FetchAllAccountsId(customerId)
+
+	if err != nil {
+		WriteResponse(w, err.StatusCode, err.AsMessage())
+		return
+	}
+
+	WriteResponse(w, http.StatusOK, response)
+}
+
+func (ah *AccountHandler) FetchAccountById(w http.ResponseWriter, r *http.Request) {
+	accountId := mux.Vars(r)["account_id"]
+	response, err := ah.service.FetchAccountById(accountId)
 
 	if err != nil {
 		WriteResponse(w, err.StatusCode, err.AsMessage())
