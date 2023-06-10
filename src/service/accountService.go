@@ -11,6 +11,7 @@ import (
 // Account Primary Port
 type AccountService interface {
 	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
+	FetchAllAccounts(string) (*dto.AccountsResponse, *errs.AppError)
 }
 
 // Account Default Service Primary Adapter
@@ -45,4 +46,20 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	newAccountResponse := NewAccount.ToNewAccountResponseDto()
 
 	return &newAccountResponse, nil
+}
+
+func (s DefaultAccountService) FetchAllAccounts(customerId string) (*dto.AccountsResponse, *errs.AppError) {
+	coreObjectAccounts, err := s.repo.FindAllCustomerAccounts(customerId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var accountsResponse dto.AccountsResponse
+
+	for _, account := range coreObjectAccounts {
+		accountsResponse.AccountsId = append(accountsResponse.AccountsId, account.AccountId)
+	}
+
+	return &accountsResponse, nil
 }

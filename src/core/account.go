@@ -18,6 +18,7 @@ type Account struct {
 // Account Secondary Port
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
+	FindAllCustomerAccounts(string) ([]Account, *errs.AppError)
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {

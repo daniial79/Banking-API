@@ -31,6 +31,7 @@ func Start() {
 	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{id:[0-9]+}", ch.GetCustomerById).Methods(http.MethodGet)
 	router.HandleFunc("/customers/{id:[0-9]+}/account", ah.CreateNewAccount).Methods(http.MethodPost)
+	router.HandleFunc("/customers/{id:[0-9]+}/accounts", ah.FetchMyAccountsId)
 
 	if err := http.ListenAndServe(config.GetServerAddr(), router); err != nil {
 		logger.Error(err.Error())

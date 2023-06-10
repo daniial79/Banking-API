@@ -36,3 +36,16 @@ func (ah *AccountHandler) CreateNewAccount(w http.ResponseWriter, r *http.Reques
 
 	WriteResponse(w, http.StatusCreated, response)
 }
+
+func (ah *AccountHandler) FetchMyAccountsId(w http.ResponseWriter, r *http.Request) {
+	customerId := mux.Vars(r)["id"]
+
+	response, err := ah.service.FetchAllAccounts(customerId)
+
+	if err != nil {
+		WriteResponse(w, err.StatusCode, err.AsMessage())
+		return
+	}
+
+	WriteResponse(w, http.StatusOK, response)
+}

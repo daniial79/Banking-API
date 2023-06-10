@@ -35,3 +35,20 @@ func (d AccountRepositoryDb) Save(a Account) (*Account, *errs.AppError) {
 
 	return &a, nil
 }
+
+func (d AccountRepositoryDb) FindAllCustomerAccounts(customerId string) ([]Account, *errs.AppError) {
+	accounts := make([]Account, 0)
+	FindAllSql := "SELECT * FROM accounts WHERE customer_id = ?"
+
+	err := d.client.Select(&accounts, FindAllSql, customerId)
+	if err != nil {
+		logger.Error("Error while retrieving all the accounts associated to specific customer: " + err.Error())
+		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
+	}
+
+	if len(accounts) == 0 {
+		return nil, errs.NewNotFoundErr("There is no account registered with this customer id")
+	}
+
+	return accounts, nil
+}
