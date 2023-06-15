@@ -62,6 +62,11 @@ func Start() {
 		Methods(http.MethodPost).
 		Name("NewTransaction")
 
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]}/transactions", ah.FetchAllAccountTransactions).
+		Methods(http.MethodGet).
+		Name("GetAllAccountTransactions")
+
 	if err := http.ListenAndServe(config.GetServerAddr(), router); err != nil {
 		logger.Error(err.Error())
 	}

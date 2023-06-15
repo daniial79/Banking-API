@@ -117,6 +117,10 @@ func (s DefaultAccountService) FetchAllAccountTransactions(accountId, transactio
 		return nil, err
 	}
 
+	if len(coreTransactionObjects) == 0 {
+		return nil, errs.NewNotFoundErr("There is no transaction corresponded to this account")
+	}
+
 	response := make([]dto.TransactionResponse, 0)
 
 	for _, transaction := range coreTransactionObjects {

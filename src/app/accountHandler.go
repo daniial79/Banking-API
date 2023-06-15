@@ -63,22 +63,18 @@ func (ah *AccountHandler) FetchAccountById(w http.ResponseWriter, r *http.Reques
 }
 
 func (h AccountHandler) MakeTransaction(w http.ResponseWriter, r *http.Request) {
-	// get the account_id and customer_id from the URL
 	vars := mux.Vars(r)
 	accountId := vars["account_id"]
 	customerId := vars["customer_id"]
 
-	// decode incoming request
 	var request dto.NewTransactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		writeResponse(w, http.StatusBadRequest, err.Error())
 	} else {
 
-		//build the request object
 		request.AccountId = accountId
 		request.CustomerId = customerId
 
-		// make transaction
 		account, appError := h.service.MakeTransaction(request)
 
 		if appError != nil {
@@ -88,4 +84,17 @@ func (h AccountHandler) MakeTransaction(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
+}
+
+func (ah AccountHandler) FetchAllAccountTransactions(w http.ResponseWriter, r *http.Request) {
+	accountId := mux.Vars(r)["account_id"]
+	transactionType := r.URL.Query().Get("type")
+	response, err := ah.service.FetchAllAccountTransactions(accountId, transactionType)
+
+	if err != nil {
+		writeResponse(w, err.StatusCode, err.AsMessage())
+		return
+	}
+
+	writeResponse(w, err.StatusCode, response)
 }
