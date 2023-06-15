@@ -15,7 +15,7 @@ type Account struct {
 	Status      string
 }
 
-func (a Account) ToDto() dto.AccountResponse {
+func (a Account) ToAccountDto() dto.AccountResponse {
 	return dto.AccountResponse{
 		AccountType: a.AccountType,
 		Amount:      a.Amount,
@@ -32,10 +32,7 @@ func (a Account) setStatusAsText() string {
 }
 
 func (a Account) CanWithdraw(amount float64) bool {
-	if a.Amount < amount {
-		return false
-	}
-	return true
+	return a.Amount >= amount
 }
 
 // Account Secondary Port
@@ -44,6 +41,7 @@ type AccountRepository interface {
 	FindAllCustomerAccounts(string) ([]Account, *errs.AppError)
 	FindById(customerId string) (*Account, *errs.AppError)
 	SaveTransaction(t Transaction) (*Transaction, *errs.AppError)
+	GetTransactions(accountId, transactionType string) ([]Transaction, *errs.AppError)
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {

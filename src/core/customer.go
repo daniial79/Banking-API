@@ -36,7 +36,7 @@ func (c Customer) setStatusAsText() string {
 	return stat
 }
 
-func (c Customer) ToDto() dto.CustomerResponse {
+func (c Customer) ToCustomerResponseDto() dto.CustomerResponse {
 	return dto.CustomerResponse{
 		Id:          c.Id,
 		Name:        c.Name,

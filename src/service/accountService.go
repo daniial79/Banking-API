@@ -12,8 +12,9 @@ import (
 type AccountService interface {
 	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppError)
 	FetchAccountById(string) (*dto.AccountResponse, *errs.AppError)
-	FetchAllAccounts(customerId string) (*dto.AccountsIdResponse, *errs.AppError)
+	FetchAllAccounts(customerId string) ([]dto.AccountResponse, *errs.AppError)
 	MakeTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppError)
+	FetchAllAccountTransactions(accountId, transactionType string) ([]dto.TransactionResponse, *errs.AppError)
 }
 
 // Account Default Service Primary Adapter
@@ -50,20 +51,20 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	return &newAccountResponse, nil
 }
 
-func (s DefaultAccountService) FetchAllAccounts(customerId string) (*dto.AccountsIdResponse, *errs.AppError) {
+func (s DefaultAccountService) FetchAllAccounts(customerId string) ([]dto.AccountResponse, *errs.AppError) {
 	coreObjectAccounts, err := s.repo.FindAllCustomerAccounts(customerId)
 
 	if err != nil {
 		return nil, err
 	}
 
-	var accountsIdResponse dto.AccountsIdResponse
+	accounts := make([]dto.AccountResponse, 0)
 
 	for _, account := range coreObjectAccounts {
-		accountsIdResponse.AccountsId = append(accountsIdResponse.AccountsId, account.AccountId)
+		accounts = append(accounts, account.ToAccountDto())
 	}
 
-	return &accountsIdResponse, nil
+	return accounts, nil
 }
 
 func (s DefaultAccountService) FetchAccountById(accountId string) (*dto.AccountResponse, *errs.AppError) {
@@ -73,7 +74,7 @@ func (s DefaultAccountService) FetchAccountById(accountId string) (*dto.AccountR
 		return nil, err
 	}
 
-	accountResponse := accountCoreObject.ToDto()
+	accountResponse := accountCoreObject.ToAccountDto()
 
 	return &accountResponse, nil
 
@@ -106,6 +107,21 @@ func (s DefaultAccountService) MakeTransaction(req dto.NewTransactionRequest) (*
 	if appError != nil {
 		return nil, appError
 	}
-	response := transaction.ToDto()
+	response := transaction.ToNewTransactionResponseDto()
 	return &response, nil
+}
+
+func (s DefaultAccountService) FetchAllAccountTransactions(accountId, transactionType string) ([]dto.TransactionResponse, *errs.AppError) {
+	coreTransactionObjects, err := s.repo.GetTransactions(accountId, transactionType)
+	if err != nil {
+		return nil, err
+	}
+
+	response := make([]dto.TransactionResponse, 0)
+
+	for _, transaction := range coreTransactionObjects {
+		response = append(response, transaction.ToTransactionResponseDto())
+	}
+
+	return response, nil
 }

@@ -115,3 +115,23 @@ func (d AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *errs
 	t.Amount = account.Amount
 	return &t, nil
 }
+
+func (d AccountRepositoryDb) GetTransactions(accountId, transactionType string) ([]Transaction, *errs.AppError) {
+	selectSql := "SELECT * FROM transactions WHERE account_id = ?"
+
+	if transactionType == "withdrawal" {
+		selectSql += " AND transaction_type = withdrawal"
+	} else if transactionType == "deposit" {
+		selectSql += " AND transaction_type = deposit"
+	}
+
+	transactions := make([]Transaction, 0)
+
+	err := d.client.Select(&transactions, selectSql, accountId)
+	if err != nil {
+		logger.Error("Error while retrieving transactions corresponded to specific account: " + err.Error())
+		return nil, errs.NewUnexpectedDbErr("Unexpected database error")
+	}
+
+	return transactions, nil
+}

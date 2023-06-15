@@ -13,14 +13,19 @@ type Transaction struct {
 	TransactionDate string  `db:"transaction_date"`
 }
 
-func (t Transaction) IsWithdrawal() bool {
-	if t.TransactionType == WITHDRAWAL {
-		return true
+func (t Transaction) ToTransactionResponseDto() dto.TransactionResponse {
+	return dto.TransactionResponse{
+		Amount:          t.Amount,
+		TransactionType: t.AccountId,
+		TransactionDate: t.TransactionDate,
 	}
-	return false
 }
 
-func (t Transaction) ToDto() dto.NewTransactionResponse {
+func (t Transaction) IsWithdrawal() bool {
+	return t.TransactionType == WITHDRAWAL
+}
+
+func (t Transaction) ToNewTransactionResponseDto() dto.NewTransactionResponse {
 	return dto.NewTransactionResponse{
 		TransactionId:   t.TransactionId,
 		AccountId:       t.AccountId,
