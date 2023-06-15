@@ -38,12 +38,12 @@ func Start() {
 		Name("GetCustomers")
 
 	router.
-		HandleFunc("/customers/{id:[0-9]+}", ch.GetCustomerById).
+		HandleFunc("/customers/{customer_id:[0-9]+}", ch.GetCustomerById).
 		Methods(http.MethodGet).
 		Name("GetByCustomerId")
 
 	router.
-		HandleFunc("/customers/{id:[0-9]+}/accounts", ah.CreateNewAccount).
+		HandleFunc("/customers/{customer_id:[0-9]+}/accounts", ah.CreateNewAccount).
 		Methods(http.MethodPost).
 		Name("CreateAccount")
 

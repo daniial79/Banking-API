@@ -19,17 +19,17 @@ func (ch *CustomerHandler) CreateNewCustomer(w http.ResponseWriter, r *http.Requ
 	err := json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
-		WriteResponse(w, http.StatusBadRequest, err)
+		writeResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
 	response, appErr := ch.service.NewCustomer(request)
 	if err != nil {
-		WriteResponse(w, appErr.StatusCode, appErr.AsMessage())
+		writeResponse(w, appErr.StatusCode, appErr.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusCreated, response)
+	writeResponse(w, http.StatusCreated, response)
 }
 
 func (ch *CustomerHandler) GetAllCustomers(w http.ResponseWriter, r *http.Request) {
@@ -37,21 +37,21 @@ func (ch *CustomerHandler) GetAllCustomers(w http.ResponseWriter, r *http.Reques
 	customers, err := ch.service.GetAllCustomers(status)
 
 	if err != nil {
-		WriteResponse(w, err.StatusCode, err.AsMessage())
+		writeResponse(w, err.StatusCode, err.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusOK, customers)
+	writeResponse(w, http.StatusOK, customers)
 }
 
 func (ch *CustomerHandler) GetCustomerById(w http.ResponseWriter, r *http.Request) {
-	id := mux.Vars(r)["id"]
+	id := mux.Vars(r)["customer_id"]
 	customer, err := ch.service.GetCustomerById(id)
 
 	if err != nil {
-		WriteResponse(w, err.StatusCode, err.AsMessage())
+		writeResponse(w, err.StatusCode, err.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusOK, customer)
+	writeResponse(w, http.StatusOK, customer)
 }

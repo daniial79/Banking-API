@@ -17,12 +17,12 @@ type AccountHandler struct {
 func (ah *AccountHandler) CreateNewAccount(w http.ResponseWriter, r *http.Request) {
 	var (
 		request    dto.NewAccountRequest
-		customerId = mux.Vars(r)["id"]
+		customerId = mux.Vars(r)["customer_id"]
 	)
 	err := json.NewDecoder(r.Body).Decode(&request)
 
 	if err != nil {
-		WriteResponse(w, http.StatusBadRequest, err)
+		writeResponse(w, http.StatusBadRequest, err)
 		return
 	}
 
@@ -30,11 +30,11 @@ func (ah *AccountHandler) CreateNewAccount(w http.ResponseWriter, r *http.Reques
 	response, appError := ah.service.NewAccount(request)
 
 	if appError != nil {
-		WriteResponse(w, appError.StatusCode, appError.AsMessage())
+		writeResponse(w, appError.StatusCode, appError.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusCreated, response)
+	writeResponse(w, http.StatusCreated, response)
 }
 
 func (ah *AccountHandler) FetchMyAccounts(w http.ResponseWriter, r *http.Request) {
@@ -43,11 +43,11 @@ func (ah *AccountHandler) FetchMyAccounts(w http.ResponseWriter, r *http.Request
 	response, err := ah.service.FetchAllAccounts(customerId)
 
 	if err != nil {
-		WriteResponse(w, err.StatusCode, err.AsMessage())
+		writeResponse(w, err.StatusCode, err.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusOK, response)
+	writeResponse(w, http.StatusOK, response)
 }
 
 func (ah *AccountHandler) FetchAccountById(w http.ResponseWriter, r *http.Request) {
@@ -55,11 +55,11 @@ func (ah *AccountHandler) FetchAccountById(w http.ResponseWriter, r *http.Reques
 	response, err := ah.service.FetchAccountById(accountId)
 
 	if err != nil {
-		WriteResponse(w, err.StatusCode, err.AsMessage())
+		writeResponse(w, err.StatusCode, err.AsMessage())
 		return
 	}
 
-	WriteResponse(w, http.StatusOK, response)
+	writeResponse(w, http.StatusOK, response)
 }
 
 func (h AccountHandler) MakeTransaction(w http.ResponseWriter, r *http.Request) {
@@ -71,7 +71,7 @@ func (h AccountHandler) MakeTransaction(w http.ResponseWriter, r *http.Request) 
 	// decode incoming request
 	var request dto.NewTransactionRequest
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		WriteResponse(w, http.StatusBadRequest, err.Error())
+		writeResponse(w, http.StatusBadRequest, err.Error())
 	} else {
 
 		//build the request object
@@ -82,9 +82,9 @@ func (h AccountHandler) MakeTransaction(w http.ResponseWriter, r *http.Request) 
 		account, appError := h.service.MakeTransaction(request)
 
 		if appError != nil {
-			WriteResponse(w, appError.StatusCode, appError.AsMessage())
+			writeResponse(w, appError.StatusCode, appError.AsMessage())
 		} else {
-			WriteResponse(w, http.StatusOK, account)
+			writeResponse(w, http.StatusOK, account)
 		}
 	}
 
