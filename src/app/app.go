@@ -27,12 +27,40 @@ func Start() {
 	ah := AccountHandler{service: service.NewAccountService(accountRepositoryDb)}
 
 	//routings
-	router.HandleFunc("/customers", ch.CreateNewCustomer).Methods(http.MethodPost)
-	router.HandleFunc("/customers", ch.GetAllCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{id:[0-9]+}", ch.GetCustomerById).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{id:[0-9]+}/accounts", ah.CreateNewAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/{id:[0-9]+}/accounts", ah.FetchMyAccountsId)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/accounts/{account_id:[0-9]+}", ah.FetchAccountById)
+	router.
+		HandleFunc("/customers", ch.CreateNewCustomer).
+		Methods(http.MethodPost).
+		Name("CreateCustomer")
+
+	router.
+		HandleFunc("/customers", ch.GetAllCustomers).
+		Methods(http.MethodGet).
+		Name("GetCustomers")
+
+	router.
+		HandleFunc("/customers/{id:[0-9]+}", ch.GetCustomerById).
+		Methods(http.MethodGet).
+		Name("GetByCustomerId")
+
+	router.
+		HandleFunc("/customers/{id:[0-9]+}/accounts", ah.CreateNewAccount).
+		Methods(http.MethodPost).
+		Name("CreateAccount")
+
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/accounts/{account_id:[0-9]+}", ah.FetchAccountById).
+		Methods(http.MethodGet).
+		Name("GetByAccountId")
+
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/accounts", ah.FetchMyAccounts).
+		Methods(http.MethodGet).
+		Name("GetAllCustomerAccounts")
+
+	router.
+		HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.MakeTransaction).
+		Methods(http.MethodPost).
+		Name("NewTransaction")
 
 	if err := http.ListenAndServe(config.GetServerAddr(), router); err != nil {
 		logger.Error(err.Error())

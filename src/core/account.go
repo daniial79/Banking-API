@@ -31,11 +31,19 @@ func (a Account) setStatusAsText() string {
 	return stat
 }
 
+func (a Account) CanWithdraw(amount float64) bool {
+	if a.Amount < amount {
+		return false
+	}
+	return true
+}
+
 // Account Secondary Port
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppError)
 	FindAllCustomerAccounts(string) ([]Account, *errs.AppError)
 	FindById(customerId string) (*Account, *errs.AppError)
+	SaveTransaction(t Transaction) (*Transaction, *errs.AppError)
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
