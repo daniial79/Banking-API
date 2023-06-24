@@ -22,7 +22,7 @@ type DefaultAccountService struct {
 	repo core.AccountRepository
 }
 
-func NewAccountService(repo core.AccountRepository) DefaultAccountService {
+func NewDefaultAccountService(repo core.AccountRepository) DefaultAccountService {
 	return DefaultAccountService{repo}
 }
 

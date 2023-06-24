@@ -24,7 +24,7 @@ func Start() {
 	ch := CustomerHandler{service.NewDefaultCustomerService(customerRepositoryDb)}
 
 	accountRepositoryDb := core.NewAccountRepositoryDb(dbClient)
-	ah := AccountHandler{service: service.NewAccountService(accountRepositoryDb)}
+	ah := AccountHandler{service: service.NewDefaultAccountService(accountRepositoryDb)}
 
 	//routings
 	router.
